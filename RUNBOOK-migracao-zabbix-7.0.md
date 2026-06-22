@@ -108,47 +108,31 @@ Se retornar FreeBSD, PARE: e OSTEC, nao migra agora.
 
 ### A2 - Instalar o proxy 7.0 no firewall EDGE
 
-Exemplo Debian 13 (bookworm). Para Debian 11 trocar debian13 por debian11.
 # Debian 11 (bullseye)
 ```bash
 wget https://repo.zabbix.com/zabbix/7.0/debian/pool/main/z/zabbix-release/zabbix-release_latest_7.0+debian11_all.deb
-```
-```bash
 dpkg -i zabbix-release_latest_7.0+debian11_all.deb
-```
-```bash
 apt update
-```
-```bash
 apt install -y zabbix-proxy-sqlite3 zabbix-sql-scripts
 ```
+
 # Debian 12 (bookworm)
 ```bash
 wget https://repo.zabbix.com/zabbix/7.0/debian/pool/main/z/zabbix-release/zabbix-release_latest_7.0+debian12_all.deb
-```
-```bash
 dpkg -i zabbix-release_latest_7.0+debian12_all.deb
-```
-```bash
 apt update
-```
-```bash
 apt install -y zabbix-proxy-sqlite3 zabbix-sql-scripts
 ```
+
 # Debian 13 (trixie)
 ```bash
 wget https://repo.zabbix.com/zabbix/7.0/debian/pool/main/z/zabbix-release/zabbix-release_latest_7.0+debian13_all.deb
-```
-```bash
 dpkg -i zabbix-release_latest_7.0+debian13_all.deb
-```
-```bash
 apt update
-```
-```bash
 apt install -y zabbix-proxy-sqlite3 zabbix-sql-scripts
 ```
-## Em duvida na URL, confirmar em zabbix.com/download (7.0 + Debian + versao).
+
+Em duvida na URL, confirmar em zabbix.com/download (7.0 + Debian + versao).
 
 ### A3 - Gerar PSK e configurar o proxy
 
@@ -242,20 +226,111 @@ Conferir se os hosts importados ja vieram com Monitored by proxy = SRV-ZBX[CLIEN
 - Selecionar todos os hosts importados do cliente
 - Mass update > aba Monitored by > Proxy > SRV-ZBX[CLIENTE] > Update
 
-### A9 - Validar
+### A9 - Atualizar o agente em cada servidor do cliente
+
+Os hosts monitorados por agente (Windows/Linux) precisam apontar para o novo IP do Zabbix 7.0.
+Fazer isso ANTES de validar a coleta.
+
+**Windows (PowerShell - rodar em cada servidor):**
+```powershell
+(Get-Content "C:\Program Files\Zabbix Agent\zabbix_agentd.conf") -replace '191\.31\.160\.14','177.104.184.226' | Set-Content "C:\Program Files\Zabbix Agent\zabbix_agentd.conf"
+Restart-Service "Zabbix Agent"
+```
+
+Se o agente for Zabbix Agent 2:
+```powershell
+(Get-Content "C:\Program Files\Zabbix Agent 2\zabbix_agent2.conf") -replace '191\.31\.160\.14','177.104.184.226' | Set-Content "C:\Program Files\Zabbix Agent 2\zabbix_agent2.conf"
+Restart-Service "Zabbix Agent 2"
+```
+
+**Linux/Proxmox (bash - rodar em cada servidor):**
+```bash
+sed -i 's/191\.31\.160\.14/177.104.184.226/g' /etc/zabbix/zabbix_agent2.conf
+systemctl restart zabbix-agent2
+```
+
+**Lista de servidores por cliente (IPs para acessar via RDP/SSH):**
+
+| Cliente | Proxy | Host | IP | OS |
+|---------|-------|------|----|----|
+| AGROSANTA | SRV-ZBXAGROSANTA | SRV-TORONTO-AD | 192.168.0.7 | Windows |
+| AGROSANTA | SRV-ZBXAGROSANTA | SRV-BACKUP-ALTAMIRA | 192.168.2.17 | Windows |
+| AGROSANTA | SRV-ZBXAGROSANTA | SRV-BACKUP-SANTAREM | 192.168.0.22 | Windows |
+| ALIAR | SRV-ZBXALIAR | SRV-BACKUP | 172.16.12.51 | Windows |
+| ALIAR | SRV-ZBXALIAR | SRV-DOMINIO | 172.16.12.9 | Windows |
+| ALIAR | SRV-ZBXALIAR | SRV-DUBAI-AD | 172.16.12.3 | Windows |
+| CAPECA | SRV-ZBXCAPECA | SRV-AD | 192.168.3.99 | Windows |
+| CAPECA | SRV-ZBXCAPECA | SRV-AD02 | 192.168.3.2 | Windows |
+| CAPECA | SRV-ZBXCAPECA | SRV-AGROTIS | 192.168.3.103 | Windows |
+| CAPECA | SRV-ZBXCAPECA | SRV-ALTERDATA | 192.168.3.102 | Windows |
+| CAPECA | SRV-ZBXCAPECA | SRV-BACKUP | 192.168.3.82 | Windows |
+| CAPECA | SRV-ZBXCAPECA | SRV-FEEDBACK | 192.168.3.101 | Windows |
+| CDC | SRV-CDCZBXPROXY | SERVERAD | 10.100.22.3 | Windows |
+| CDC | SRV-CDCZBXPROXY | SERVERAD-2008 | 10.100.22.8 | Windows |
+| CDC | SRV-CDCZBXPROXY | SRV-BACKUP | 10.100.22.19 | Windows |
+| CDC | SRV-CDCZBXPROXY | VMSERVBD | 10.100.22.2 | Windows |
+| CDC | SRV-CDCZBXPROXY | PROXMOX-PVE | 10.100.22.9 | Linux |
+| CESARO | SRV-ZBXCESARO | SRV-AD | 192.168.2.10 | Windows |
+| CESARO | SRV-ZBXCESARO | SRV-BACKUP | 192.168.2.199 | Windows |
+| CESARO | SRV-ZBXCESARO | SRV-MSP | 192.168.2.5 | Windows |
+| CLUBE PALMEIRAS | CLUBP-SRV-ZBXCLUBP | SRV-AD NEW | 192.168.100.10 | Windows |
+| CLUBE PALMEIRAS | CLUBP-SRV-ZBXCLUBP | SRV-BACKUP | 192.168.100.235 | Windows |
+| DERMAC | SRV-ZBXDERMAC | SRV-AD | 10.10.10.10 | Windows |
+| DERMAC | SRV-ZBXDERMAC | SRV-BACKUP | 10.10.10.97 | Windows |
+| DERMAC | SRV-ZBXDERMAC | SRV-LISBOA | 10.10.10.3 | Windows |
+| DERMAC | SRV-ZBXDERMAC | SRV-PONTO | 10.10.10.4 | Windows |
+| DERMAC | SRV-ZBXDERMAC | SRV-PORTO | 10.10.10.2 | Windows |
+| DERMAC | SRV-ZBXDERMAC | PBX | 10.10.10.20 | Linux |
+| ESPLLENDA | SRV-ZBXESPLLENDA | SRV-ATLANTA | 192.168.99.4 | Windows |
+| ESPLLENDA | SRV-ZBXESPLLENDA | SRV-BACKUP | 192.168.99.108 | Windows |
+| ESPLLENDA | SRV-ZBXESPLLENDA | SRV-DALLAS-AD | 192.168.99.3 | Windows |
+| ESPLLENDA | SRV-ZBXESPLLENDA | PBX-ISSABEL | 192.168.99.150 | Linux |
+| EUROMINAS | SRV-ZBXEUROMINAS | SRV-AD | 192.168.1.3 | Windows |
+| EUROMINAS | SRV-ZBXEUROMINAS | SRV-BACKUP | 192.168.1.21 | Windows |
+| EUROMINAS | SRV-ZBXEUROMINAS | SRV-CATALOGOS | 192.168.1.8 | Windows |
+| EUROMINAS | SRV-ZBXEUROMINAS | SRV-FILES | 192.168.1.11 | Windows |
+| EUROMINAS | SRV-ZBXEUROMINAS | SERVDELL | 192.168.1.2 | Windows |
+| GLOBAL | SRV-ZBXGLOBAL | SRV-AD | 192.168.0.8 | Windows |
+| GLOBAL | SRV-ZBXGLOBAL | SRV-BACKUP | 192.168.0.62 | Windows |
+| GLOBAL | SRV-ZBXGLOBAL | SRV-BD-TUNDRA | 10.10.0.5 | Windows |
+| GLOBAL | SRV-ZBXGLOBAL | PROXMOX-PVE03 | 192.168.0.3 | Linux |
+| GLOBAL | SRV-ZBXGLOBAL | PROXMOX-PVE17 | 192.168.0.17 | Linux |
+| GLOBAL | SRV-ZBXGLOBAL | PROXMOX-PVE16 | 192.168.0.16 | Linux |
+| GLOBAL | SRV-ZBXGLOBAL | PBX | 172.19.12.2 | Linux |
+| GLOBAL | SRV-ZBXGLOBAL | SRV-APP-BD-TUNDRA | 10.10.0.7 | Linux |
+| GUINDASTES | SRV-ZBXGUINDASTES | G T - SRV - LONDON | guindastestriangulo.stsec.com.br | Windows |
+| GURUPI | SRV-ZBXGURUPI | SRV-AD | 192.168.100.252 | Windows |
+| GURUPI | SRV-ZBXGURUPI | SRV-BACKUPNEW | 192.168.100.20 | Windows |
+| LEDIFRAN | SRV-ZBXLEDIFRAN | SRV-BACKUP | 192.168.100.22 | Windows |
+| MILENIUM | SRV-ZBXMILENIUM | SRV-AD-VEEAM | 172.21.12.5 | Windows |
+| PIRAJUBA | SRV-ZBXPIRAJUBA | SRV-AD1 | 192.168.0.251 | Windows |
+| PIRAJUBA | SRV-ZBXPIRAJUBA | SRV-BACKUP-105 | 192.168.0.105 | Windows |
+| PIRAJUBA | SRV-ZBXPIRAJUBA | SRV-BACKUP2-124 | 192.168.0.124 | Windows |
+| PIRAJUBA | SRV-ZBXPIRAJUBA | SRV-DHCP | 192.168.0.250 | Windows |
+| PIRAJUBA | SRV-ZBXPIRAJUBA | SRV-MANHATTAN-AD | 192.168.0.254 | Windows |
+| RENOVOLTECH | SRV-ZBXRENOVOLTECH | SRV-BUDAPESTE-AD | 192.168.1.4 | Windows |
+| RENOVOLTECH | SRV-ZBXRENOVOLTECH | SRV-BACKUP | 192.168.1.192 | Windows |
+| RENOVOLTECH | SRV-ZBXRENOVOLTECH | SRV-MASTERSYSDB | 192.168.1.83 | Windows |
+| SUPERRENATA | SRV-ZBXRENATA | SRV-AD | 192.168.0.5 | Windows |
+| SUPERRENATA | SRV-ZBXRENATA | SRV-BACKUP-NEW | 192.168.0.72 | Windows |
+| VALO | SRV-ZBXVALO-UDI | SRV-LONDON (Backup) | 172.31.16.2 | Windows |
+| VALO | SRV-ZBXVALO-UDI | SRV-AD | 172.31.16.5 | Windows |
+| VALO | SRV-ZBXVALO-UDI | PBX | 172.16.100.2 | Linux |
+
+### A10 - Validar
 
 - Monitoring > Latest data filtrando pelo proxy: varios hosts coletando
 - Host de backup: item Conexao com o Banco = 1
 - ESXi: descoberta de VMs OK
 - Execute now nos itens de descoberta dos principais
 
-### A10 - Parar a coleta no 6.4
+### A11 - Parar a coleta no 6.4
 
 Para nao haver coleta dupla, no 6.4 (frontend: 172.31.12.55):
 - Selecionar os hosts daquele cliente
 - Disable (ou deletar, se ja estiver confiante)
 
-### A11 - Aposentar a VM do proxy
+### A12 - Aposentar a VM do proxy
 
 - Confirmar que TUDO daquele cliente esta coletando no 7.0
 - Desligar a VM do proxy no Proxmox/ESXi
@@ -286,6 +361,7 @@ systemctl restart zabbix-agent2
 
 ### B4 - Validar
 - Monitoring > Latest data: cada EDGE coletando.
+
 Nota de seguranca: os EDGE expoem a 10050 na internet. Recomendado PSK tambem nos agentes (2a passada).
 
 ---
@@ -334,7 +410,7 @@ IMPORTANTE: e o ponto de partida (interface do host no 6.4). Validar com ping e 
 
 - **Agrosanta e Pirajuba**: 1 proxy, 2 servidores de backup. Precisam de 2 DSNs no odbc.ini. Copiar o odbc.ini da VM antiga e so atualizar IP/Driver.
 - **Superrenata**: 2 hosts no IP 192.168.0.72; so o NEW tem ODBC Veeam. Migrar so o NEW.
-- **Guindastes**: servidor Veeam por DNS. Conferir o IP interno na hora do odbc.ini.
+- **Guindastes**: servidor Veeam por DNS. Confirmar o IP interno na hora do odbc.ini.
 
 ---
 
@@ -368,6 +444,7 @@ Cliente: ______  Proxy: ______  Firewall (EDGE?): ______  IP Veeam: ______
 - [ ] Log: received configuration data from server
 - [ ] TODOS os hosts do proxy exportados (menos lixos) e importados
 - [ ] Mass update: todos vinculados ao proxy do firewall
+- [ ] Agente atualizado em todos os servidores Windows/Linux do cliente (A9)
 - [ ] Coleta OK (varios hosts) e Conexao com o Banco = 1
 - [ ] Hosts desabilitados no 6.4 (sem coleta dupla)
 - [ ] VM aposentada (apos 24h)
