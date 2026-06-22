@@ -52,9 +52,10 @@ CLUBP, CDC, AGROSANTA, ALIAR, CAMPOFLORIDO, CAPECA, CESARO, DERMAC, ESPLLENDA, E
 
 | Item | Valor |
 |------|-------|
-| Zabbix origem (6.4) | 191.31.160.14 |
-| Zabbix destino (7.0 nuvem) - IP publico p/ proxies | 177.104.184.226 |
-| Frontend web da nuvem (acesso interno) | 172.31.12.55 |
+| Zabbix 6.4 - frontend web (acesso interno) | 172.31.12.55 |
+| Zabbix 6.4 - IP publico (on-premise Futura) | 191.31.160.14 |
+| Zabbix 7.0 - frontend web (acesso interno, nuvem) | 192.168.100.100 |
+| Zabbix 7.0 - IP publico p/ proxies e agentes | 177.104.184.226 |
 | Porta proxy para servidor | 10051 |
 | Template a migrar | Template Monitoramento ODBC Veeam B-R v1.1 |
 | Macros ODBC | {$USERNAME} = sqlzabbix, {$PASSWORD} = sqlzabbix |
@@ -74,7 +75,7 @@ PASSO Z  - Conferir Grafana e aposentar VMs antigas
 
 Como vamos migrar TODOS os hosts, todos os templates customizados precisam existir no 7.0 antes. Os templates nativos do Zabbix (Windows by Zabbix agent, VMware, Linux by Zabbix agent, ICMP Ping) JA vem no 7.0 - nao exportar esses.
 
-**0.1 - Identificar e exportar os customizados do 6.4 (191.31.160.14):**
+**0.1 - Identificar e exportar os customizados do 6.4 (frontend: 172.31.12.55):**
 - Data collection > Templates
 - Selecionar os templates de nome proprio (nao-nativos). Confirmados ate agora:
   - Template Monitoramento ODBC Veeam B-R v1.1
@@ -83,7 +84,7 @@ Como vamos migrar TODOS os hosts, todos os templates customizados precisam exist
   - qualquer outro template proprio (Acronis, etc.)
 - Marcar todos > Export > salvar como templates-custom.yaml
 
-**0.2 - Importar no 7.0 (frontend 172.31.12.55):**
+**0.2 - Importar no 7.0 (frontend: 192.168.100.100):**
 - Data collection > Templates > Import
 - Selecionar o arquivo
 - Marcar Create new e Update existing
@@ -181,7 +182,7 @@ Casos com 2 servidores (Agrosanta, Pirajuba): copiar o odbc.ini da VM antiga, qu
 
 ### A5 - Cadastrar o proxy no 7.0
 
-Frontend 7.0:
+Frontend 7.0 (192.168.100.100):
 - Data collection > Proxies > Create proxy
 - Proxy name: SRV-ZBX[CLIENTE] (igual ao Hostname)
 - Proxy mode: Active
@@ -196,7 +197,7 @@ Frontend 7.0:
 - Marcar TODOS, menos os lixos (ver lista de lixos)
 - Export > salvar
 
-### A7 - Importar no 7.0
+### A7 - Importar no 7.0 (frontend: 192.168.100.100)
 
 - Data collection > Hosts > Import > selecionar o arquivo
 - Marcar Create new em hosts, host groups e value maps
@@ -217,7 +218,7 @@ Conferir se os hosts importados ja vieram com Monitored by proxy = SRV-ZBX[CLIEN
 
 ### A10 - Parar a coleta no 6.4
 
-Para nao haver coleta dupla, no 6.4 (191.31.160.14):
+Para nao haver coleta dupla, no 6.4 (frontend: 172.31.12.55):
 - Selecionar os hosts daquele cliente
 - Disable (ou deletar, se ja estiver confiante)
 
