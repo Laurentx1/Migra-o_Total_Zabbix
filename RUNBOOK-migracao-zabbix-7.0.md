@@ -112,22 +112,40 @@ Exemplo Debian 13 (bookworm). Para Debian 11 trocar debian13 por debian11.
 # Debian 11 (bullseye)
 ```bash
 wget https://repo.zabbix.com/zabbix/7.0/debian/pool/main/z/zabbix-release/zabbix-release_latest_7.0+debian11_all.deb
+```
+```bash
 dpkg -i zabbix-release_latest_7.0+debian11_all.deb
+```
+```bash
 apt update
+```
+```bash
 apt install -y zabbix-proxy-sqlite3 zabbix-sql-scripts
 ```
 # Debian 12 (bookworm)
 ```bash
 wget https://repo.zabbix.com/zabbix/7.0/debian/pool/main/z/zabbix-release/zabbix-release_latest_7.0+debian12_all.deb
+```
+```bash
 dpkg -i zabbix-release_latest_7.0+debian12_all.deb
+```
+```bash
 apt update
+```
+```bash
 apt install -y zabbix-proxy-sqlite3 zabbix-sql-scripts
 ```
 # Debian 13 (trixie)
 ```bash
 wget https://repo.zabbix.com/zabbix/7.0/debian/pool/main/z/zabbix-release/zabbix-release_latest_7.0+debian13_all.deb
+```
+```bash
 dpkg -i zabbix-release_latest_7.0+debian13_all.deb
+```
+```bash
 apt update
+```
+```bash
 apt install -y zabbix-proxy-sqlite3 zabbix-sql-scripts
 ```
 ## Em duvida na URL, confirmar em zabbix.com/download (7.0 + Debian + versao).
