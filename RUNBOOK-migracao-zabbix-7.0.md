@@ -108,10 +108,17 @@ Se retornar FreeBSD, PARE: e OSTEC, nao migra agora.
 
 ### A2 - Instalar o proxy 7.0 no firewall EDGE
 
-Exemplo Debian 12 (bookworm). Para Debian 11 trocar debian12 por debian11.
+Exemplo Debian 13 (bookworm). Para Debian 11 trocar debian13 por debian11.
 ```bash
-wget https://repo.zabbix.com/zabbix/7.0/release/debian/pool/main/z/zabbix-release/zabbix-release_latest_7.0+debian12_all.deb
-dpkg -i zabbix-release_latest_7.0+debian12_all.deb
+wget https://repo.zabbix.com/zabbix/7.0/release/debian/pool/main/z/zabbix-release/zabbix-release_latest_7.0+debian13_all.deb
+dpkg -i zabbix-release_latest_7.0+debian13_all.deb
+apt update
+apt install -y zabbix-proxy-sqlite3 zabbix-sql-scripts
+```
+# Se For Debian 11
+```bash
+wget https://repo.zabbix.com/zabbix/7.0/release/debian/pool/main/z/zabbix-release/zabbix-release_latest_7.0+debian11_all.deb
+dpkg -i zabbix-release_latest_7.0+debian11_all.deb
 apt update
 apt install -y zabbix-proxy-sqlite3 zabbix-sql-scripts
 ```
