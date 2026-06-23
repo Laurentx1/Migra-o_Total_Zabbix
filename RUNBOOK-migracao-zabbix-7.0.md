@@ -1,6 +1,9 @@
 # RUNBOOK - Migracao Zabbix 6.4 para 7.0 (nuvem)
 
 **Data:** 2026-06-18
+
+
+
 **Use este documento do inicio ao fim. Ele e o guia definitivo da migracao.**
 
 ---
@@ -143,7 +146,7 @@ chmod 600 /etc/zabbix/zabbix_proxy.psk
 cat /etc/zabbix/zabbix_proxy.psk        # copiar a chave para o frontend
 ```
 
-# Editar /etc/zabbix/zabbix_proxy.conf:
+## Editar /etc/zabbix/zabbix_proxy.conf:
 ```bash
 nano /etc/zabbix/zabbix_proxy.conf
 ```
