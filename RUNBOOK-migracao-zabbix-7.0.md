@@ -143,8 +143,11 @@ chmod 600 /etc/zabbix/zabbix_proxy.psk
 cat /etc/zabbix/zabbix_proxy.psk        # copiar a chave para o frontend
 ```
 
-Editar /etc/zabbix/zabbix_proxy.conf:
+# Editar /etc/zabbix/zabbix_proxy.conf:
+```bash
+nano /etc/zabbix/zabbix_proxy.conf
 ```
+```bash
 Server=177.104.184.226
 Hostname=SRV-ZBX[CLIENTE]        # IDENTICO ao nome do proxy no 6.4
 DBName=/var/lib/zabbix/zabbix_proxy.db
